@@ -721,6 +721,51 @@
       .flow-bar { gap: 12px; }
     }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function() {
+      const SUPABASE_URL = 'https://juwkgkdhzlywcgaxyedc.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_v8WVOejfUy21WQM1kksxBQ_94lagLtS';
+      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      async function updateNavAuth() {
+        const { data } = await sb.auth.getSession();
+        const user = data.session?.user;
+        const btn = document.getElementById('nav-auth-btn');
+        if (!btn) return;
+        if (user) {
+          const initial = (user.email || 'U')[0].toUpperCase();
+          btn.innerHTML = \`
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--white);border:1.5px solid rgba(255,255,255,0.4);">\${initial}</span>
+              <span id="user-email-short" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.78rem;">\${user.email}</span>
+            </span>
+          \`;
+          btn.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);color:var(--white);font-size:0.78rem;font-weight:500;padding:6px 14px 6px 8px;border-radius:30px;text-decoration:none;cursor:pointer;backdrop-filter:blur(8px);';
+          btn.onclick = async () => {
+            await sb.auth.signOut();
+            window.location.reload();
+          };
+          btn.title = 'クリックでログアウト';
+          // スクロール済み状態でも見えるように
+          const scrolledStyle = document.getElementById('nav-auth-scrolled-style');
+          if (!scrolledStyle) {
+            const s = document.createElement('style');
+            s.id = 'nav-auth-scrolled-style';
+            s.textContent = 'nav.scrolled #nav-auth-btn { background: rgba(74,159,212,0.1) !important; border-color: var(--sky-ll) !important; color: var(--ink) !important; }';
+            document.head.appendChild(s);
+          }
+        } else {
+          btn.href = 'login.html';
+          btn.textContent = 'ログイン';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', updateNavAuth);
+      sb.auth.onAuthStateChange(() => updateNavAuth());
+    })();
+  </script>
 </head>
 <body>
 
@@ -738,7 +783,7 @@
     <li><a href="#scenes">活用シーン</a></li>
     <li><a href="about.html">About Us</a></li>
   </ul>
-  <a href="#cta" class="nav-btn">詳しく見る</a>
+  <a href="login.html" class="nav-btn" id="nav-auth-btn">ログイン</a>
 </nav>
 
 <!-- HERO -->
