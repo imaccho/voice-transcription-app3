@@ -18,10 +18,10 @@
       --mint-ll:#D2F0E4;
       --mint-bg:#EBF7F2;
       --peach:  #F5845C;
+      --peach-l:#FDDDD3;
       --ink:    #1E3A4A;
       --ink-70: rgba(30,58,74,0.7);
       --ink-40: rgba(30,58,74,0.4);
-      --ink-12: rgba(30,58,74,0.12);
       --white:  #FFFFFF;
       --bg:     #F6FAFE;
       --r:      14px;
@@ -34,10 +34,11 @@
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ===== NAV ===== */
+    /* NAV */
     nav {
       height: 66px; padding: 0 48px;
       display: flex; align-items: center; justify-content: space-between;
@@ -59,21 +60,22 @@
       box-shadow: 0 3px 10px rgba(74,159,212,0.35);
     }
     .nav-back {
-      font-size: 0.82rem; color: var(--ink-70); text-decoration: none;
-      display: flex; align-items: center; gap: 6px; transition: color 0.2s;
+      font-size: 0.82rem; color: var(--ink-70);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
     }
     .nav-back:hover { color: var(--sky); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     main {
-      flex: 1; display: flex; align-items: center; justify-content: center;
+      flex: 1; display: flex;
+      align-items: center; justify-content: center;
       padding: 40px 20px;
     }
-    .login-wrap {
-      width: 100%; max-width: 440px;
-    }
+    .login-wrap { width: 100%; max-width: 440px; }
 
-    /* Logo / heading */
+    /* ロゴヘッダー */
     .login-header { text-align: center; margin-bottom: 32px; }
     .login-logo-icon {
       width: 64px; height: 64px; border-radius: 18px;
@@ -89,12 +91,78 @@
     }
     .login-header p { font-size: 0.85rem; color: var(--ink-70); }
 
+    /* ===== 状態ごとのブロック ===== */
+    /* デフォルトはすべて非表示 → JSで制御 */
+    #state-loading,
+    #state-loggedin,
+    #state-form { display: none; }
+
+    /* Loading */
+    #state-loading {
+      text-align: center; padding: 48px 0;
+    }
+    .spinner-lg {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 3px solid var(--sky-ll);
+      border-top-color: var(--sky);
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #state-loading p { font-size: 0.85rem; color: var(--ink-40); }
+
+    /* Already logged in */
+    #state-loggedin {
+      background: var(--mint-bg);
+      border: 1.5px solid var(--mint-ll);
+      border-radius: var(--r-lg);
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(61,170,122,0.09);
+    }
+    .loggedin-icon { font-size: 2.4rem; margin-bottom: 14px; }
+    #state-loggedin h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    #loggedin-email {
+      font-size: 0.85rem; color: var(--mint);
+      font-weight: 600; margin-bottom: 24px;
+      display: block; word-break: break-all;
+    }
+    .loggedin-btns {
+      display: flex; gap: 10px;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .btn-go-home {
+      background: linear-gradient(135deg, var(--sky), #2d85b8);
+      color: var(--white); font-size: 0.85rem; font-weight: 700;
+      padding: 11px 24px; border-radius: 30px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(74,159,212,0.3);
+      transition: all 0.2s;
+    }
+    .btn-go-home:hover { transform: translateY(-1px); }
+    .btn-logout {
+      background: var(--white);
+      border: 1.5px solid var(--peach-l); color: var(--peach);
+      font-size: 0.85rem; font-weight: 500;
+      padding: 11px 24px; border-radius: 30px;
+      cursor: pointer; transition: all 0.2s;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .btn-logout:hover { background: var(--peach-l); }
+
+    /* Form area */
+    #state-form {}
+
     /* Tabs */
     .tab-wrap {
       display: flex; background: var(--sky-bg);
       border: 1.5px solid var(--sky-ll);
       border-radius: 12px; padding: 4px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .tab-btn {
       flex: 1; padding: 9px;
@@ -105,8 +173,8 @@
       transition: all 0.2s;
     }
     .tab-btn.active {
-      background: var(--white);
-      color: var(--sky); font-weight: 700;
+      background: var(--white); color: var(--sky);
+      font-weight: 700;
       box-shadow: 0 2px 8px rgba(74,159,212,0.12);
     }
 
@@ -115,34 +183,31 @@
       background: var(--white);
       border: 1.5px solid var(--sky-ll);
       border-radius: var(--r-lg);
-      padding: 32px;
+      padding: 28px;
       box-shadow: 0 8px 32px rgba(74,159,212,0.09);
     }
 
-    /* Form */
-    .form-group { margin-bottom: 18px; }
+    /* Form fields */
+    .form-group { margin-bottom: 16px; }
     label {
       display: block; font-size: 0.78rem; font-weight: 700;
-      color: var(--ink); margin-bottom: 7px; letter-spacing: 0.02em;
+      color: var(--ink); margin-bottom: 6px;
     }
     input[type="email"],
-    input[type="password"],
-    input[type="text"] {
-      width: 100%; padding: 12px 16px;
-      border: 1.5px solid var(--sky-ll);
-      border-radius: var(--r);
+    input[type="password"] {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--sky-ll); border-radius: var(--r);
       font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.9rem; color: var(--ink);
-      background: var(--white);
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      font-size: 0.88rem; color: var(--ink);
+      background: var(--white); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     input:focus {
       border-color: var(--sky);
-      box-shadow: 0 0 0 3px rgba(74,159,212,0.15);
+      box-shadow: 0 0 0 3px rgba(74,159,212,0.14);
     }
     input::placeholder { color: var(--ink-40); }
 
-    /* Submit button */
     .btn-submit {
       width: 100%; padding: 13px;
       background: linear-gradient(135deg, var(--sky), #2d85b8);
@@ -152,27 +217,25 @@
       cursor: pointer; transition: all 0.22s;
       box-shadow: 0 4px 16px rgba(74,159,212,0.3);
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(74,159,212,0.4); }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(74,159,212,0.38); }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* Divider */
     .divider {
       display: flex; align-items: center; gap: 12px;
-      margin: 20px 0; color: var(--ink-40); font-size: 0.75rem;
+      margin: 18px 0; color: var(--ink-40); font-size: 0.75rem;
     }
     .divider::before, .divider::after {
       content: ''; flex: 1; height: 1px; background: var(--sky-ll);
     }
 
-    /* Magic link button */
     .btn-magic {
-      width: 100%; padding: 12px;
+      width: 100%; padding: 11px;
       background: var(--sky-bg);
       border: 1.5px solid var(--sky-ll); border-radius: var(--r);
       font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.85rem; font-weight: 500; color: var(--sky);
+      font-size: 0.84rem; font-weight: 500; color: var(--sky);
       cursor: pointer; transition: all 0.2s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
@@ -181,38 +244,29 @@
 
     /* Alert */
     .alert {
-      padding: 12px 16px; border-radius: var(--r);
-      font-size: 0.82rem; margin-bottom: 16px;
-      display: none; align-items: flex-start; gap: 10px;
+      padding: 11px 14px; border-radius: var(--r);
+      font-size: 0.81rem; margin-bottom: 14px;
+      align-items: flex-start; gap: 8px;
+      display: none;
     }
-    .alert.error {
-      display: flex;
-      background: #FFF0EE; border: 1px solid #FDDDD3; color: #C04030;
-    }
-    .alert.success {
-      display: flex;
-      background: var(--mint-bg); border: 1px solid var(--mint-ll); color: #2a7a55;
-    }
-    .alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .alert.error  { display: flex; background: #FFF0EE; border: 1px solid var(--peach-l); color: #C04030; }
+    .alert.success{ display: flex; background: var(--mint-bg); border: 1px solid var(--mint-ll); color: #2a7a55; }
 
-    /* Loading spinner */
-    .spinner {
-      display: inline-block; width: 16px; height: 16px;
+    .spinner-sm {
+      display: inline-block; width: 15px; height: 15px;
       border: 2px solid rgba(255,255,255,0.4);
       border-top-color: var(--white);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Footer note */
     .login-footer-note {
-      text-align: center; margin-top: 24px;
-      font-size: 0.75rem; color: var(--ink-40);
+      text-align: center; margin-top: 20px;
+      font-size: 0.73rem; color: var(--ink-40);
     }
     .login-footer-note a { color: var(--sky); text-decoration: none; }
 
-    /* ===== FOOTER ===== */
+    /* FOOTER */
     footer {
       background: var(--ink); padding: 28px 48px;
       display: flex; align-items: center; justify-content: space-between;
@@ -232,7 +286,7 @@
 
     @media (max-width: 600px) {
       nav { padding: 0 20px; }
-      .login-card { padding: 24px 20px; }
+      .login-card { padding: 20px; }
       footer { padding: 24px 20px; flex-direction: column; text-align: center; }
     }
   </style>
@@ -249,73 +303,81 @@
 
 <main>
   <div class="login-wrap">
+
+    <!-- ロゴ・タイトル（常に表示） -->
     <div class="login-header">
       <div class="login-logo-icon">🎙</div>
       <h1>VoiceSync</h1>
       <p>アカウントにログインして、すべての機能をご利用ください。</p>
     </div>
 
-    <div class="tab-wrap" id="tab-wrap">
-      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ログイン</button>
-      <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">新規登録</button>
+    <!-- ① 確認中スピナー（初期表示） -->
+    <div id="state-loading">
+      <div class="spinner-lg"></div>
+      <p>確認中...</p>
     </div>
 
-    <!-- Already logged in state -->
-    <div id="already-logged-in" style="display:none;margin-bottom:20px;">
-      <div style="background:var(--mint-bg);border:1.5px solid var(--mint-ll);border-radius:var(--r-lg);padding:28px 24px;text-align:center;">
-        <div style="font-size:2rem;margin-bottom:12px;">✅</div>
-        <p style="font-size:0.85rem;color:var(--mint);font-weight:700;margin-bottom:6px;">ログイン済みです</p>
-        <p id="already-email" style="font-size:0.82rem;color:var(--ink-70);margin-bottom:20px;"></p>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-          <a href="index.html" style="background:linear-gradient(135deg,var(--sky),#2d85b8);color:var(--white);font-size:0.82rem;font-weight:700;padding:10px 22px;border-radius:30px;text-decoration:none;box-shadow:0 4px 14px rgba(74,159,212,0.3);">🏠 トップへ戻る</a>
-          <button onclick="handleLogout()" style="background:var(--white);border:1.5px solid #FDDDD3;color:var(--peach);font-size:0.82rem;font-weight:500;padding:10px 22px;border-radius:30px;cursor:pointer;">ログアウト</button>
-        </div>
+    <!-- ② ログイン済みUI -->
+    <div id="state-loggedin">
+      <div class="loggedin-icon">✅</div>
+      <h3>ログイン済みです</h3>
+      <span id="loggedin-email"></span>
+      <div class="loggedin-btns">
+        <a href="index.html" class="btn-go-home">🏠 トップへ戻る</a>
+        <button class="btn-logout" onclick="handleLogout()">ログアウト</button>
       </div>
     </div>
 
-    <div id="login-forms"><div class="login-card">
-      <!-- Alert -->
-      <div class="alert" id="alert-box">
-        <span class="alert-icon" id="alert-icon"></span>
-        <span id="alert-msg"></span>
+    <!-- ③ ログインフォーム -->
+    <div id="state-form">
+      <div class="tab-wrap">
+        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ログイン</button>
+        <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">新規登録</button>
       </div>
 
-      <!-- Login form -->
-      <form id="form-login" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="login-email">メールアドレス</label>
-          <input type="email" id="login-email" placeholder="your@email.com" required>
+      <div class="login-card">
+        <div class="alert" id="alert-box">
+          <span id="alert-icon"></span>
+          <span id="alert-msg"></span>
         </div>
-        <div class="form-group">
-          <label for="login-password">パスワード</label>
-          <input type="password" id="login-password" placeholder="••••••••" required minlength="6">
-        </div>
-        <button type="submit" class="btn-submit" id="btn-login">
-          <span id="btn-login-label">ログイン</span>
+
+        <!-- Login form -->
+        <form id="form-login" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email">メールアドレス</label>
+            <input type="email" id="login-email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">パスワード</label>
+            <input type="password" id="login-password" placeholder="••••••••" required minlength="6">
+          </div>
+          <button type="submit" class="btn-submit" id="btn-login">
+            <span id="btn-login-label">ログイン</span>
+          </button>
+        </form>
+
+        <!-- Signup form -->
+        <form id="form-signup" onsubmit="handleSignup(event)" style="display:none">
+          <div class="form-group">
+            <label for="signup-email">メールアドレス</label>
+            <input type="email" id="signup-email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="signup-password">パスワード（6文字以上）</label>
+            <input type="password" id="signup-password" placeholder="••••••••" required minlength="6">
+          </div>
+          <button type="submit" class="btn-submit" id="btn-signup">
+            <span id="btn-signup-label">アカウントを作成</span>
+          </button>
+        </form>
+
+        <div class="divider">または</div>
+
+        <button class="btn-magic" id="btn-magic" onclick="handleMagicLink()">
+          ✉️ マジックリンクでログイン（メール送信）
         </button>
-      </form>
-
-      <!-- Signup form -->
-      <form id="form-signup" onsubmit="handleSignup(event)" style="display:none">
-        <div class="form-group">
-          <label for="signup-email">メールアドレス</label>
-          <input type="email" id="signup-email" placeholder="your@email.com" required>
-        </div>
-        <div class="form-group">
-          <label for="signup-password">パスワード（6文字以上）</label>
-          <input type="password" id="signup-password" placeholder="••••••••" required minlength="6">
-        </div>
-        <button type="submit" class="btn-submit" id="btn-signup">
-          <span id="btn-signup-label">アカウントを作成</span>
-        </button>
-      </form>
-
-      <div id="magic-section"><div class="divider">または</div>
-
-      <button class="btn-magic" id="btn-magic" onclick="handleMagicLink()">
-        ✉️ マジックリンクでログイン（メール送信）
-      </button>
-    </div></div></div>
+      </div>
+    </div>
 
     <p class="login-footer-note">
       ログインすることで、<a href="#">利用規約</a>および<a href="#">プライバシーポリシー</a>に同意したものとみなします。
@@ -336,29 +398,33 @@
   const SUPABASE_KEY = 'sb_publishable_v8WVOejfUy21WQM1kksxBQ_94lagLtS';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ログイン済みチェック — 即リダイレクトせず「ログイン済み」UIを表示
+  // 表示切り替えヘルパー
+  function showState(id) {
+    ['state-loading', 'state-loggedin', 'state-form'].forEach(s => {
+      document.getElementById(s).style.display = (s === id) ? '' : 'none';
+    });
+  }
+
+  // ページロード時：まずスピナーを表示してからセッション確認
+  showState('state-loading');
+
   sb.auth.getSession().then(({ data }) => {
-    if (data.session) showLoggedInState(data.session.user);
-  });
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) showLoggedInState(session.user);
-    if (event === 'SIGNED_OUT') hideLoggedInState();
+    if (data.session) {
+      // ログイン済み → ログイン済みUIを表示
+      document.getElementById('loggedin-email').textContent = data.session.user.email;
+      showState('state-loggedin');
+    } else {
+      // 未ログイン → フォームを表示
+      showState('state-form');
+    }
   });
 
-  function showLoggedInState(user) {
-    document.getElementById('already-logged-in').style.display = 'block';
-    document.getElementById('already-email').textContent = user.email;
-    document.getElementById('tab-wrap').style.display = 'none';
-    document.getElementById('login-forms').style.display = 'none';
-    document.getElementById('magic-section').style.display = 'none';
-  }
-  function hideLoggedInState() {
-    document.getElementById('already-logged-in').style.display = 'none';
-    document.getElementById('tab-wrap').style.display = '';
-    document.getElementById('login-forms').style.display = '';
-    document.getElementById('magic-section').style.display = '';
-  }
+  // ログアウト後にフォームへ切り替え
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') showState('state-form');
+  });
 
+  // タブ切り替え
   function switchTab(tab) {
     const isLogin = tab === 'login';
     document.getElementById('tab-login').classList.toggle('active', isLogin);
@@ -368,68 +434,68 @@
     clearAlert();
   }
 
+  // アラート
   function showAlert(type, msg) {
     const box = document.getElementById('alert-box');
-    const icon = document.getElementById('alert-icon');
-    const text = document.getElementById('alert-msg');
+    document.getElementById('alert-icon').textContent = type === 'error' ? '⚠️ ' : '✅ ';
+    document.getElementById('alert-msg').textContent = msg;
     box.className = 'alert ' + type;
-    icon.textContent = type === 'error' ? '⚠️' : '✅';
-    text.textContent = msg;
   }
   function clearAlert() {
     document.getElementById('alert-box').className = 'alert';
   }
 
-  function setLoading(btnId, labelId, loading, defaultLabel) {
+  // ローディング制御
+  function setLoading(btnId, labelId, loading, label) {
     const btn = document.getElementById(btnId);
-    const lbl = document.getElementById(labelId);
     btn.disabled = loading;
-    lbl.innerHTML = loading
-      ? '<span class="spinner"></span>'
-      : defaultLabel;
+    document.getElementById(labelId).innerHTML =
+      loading ? '<span class="spinner-sm"></span>' : label;
   }
 
+  // ログイン
   async function handleLogin(e) {
     e.preventDefault();
     clearAlert();
     setLoading('btn-login', 'btn-login-label', true);
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+    const { error } = await sb.auth.signInWithPassword({
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value,
+    });
     setLoading('btn-login', 'btn-login-label', false, 'ログイン');
     if (error) {
-      showAlert('error', 'ログインに失敗しました。メールアドレスとパスワードをご確認ください。');
+      showAlert('error', 'メールアドレスまたはパスワードが正しくありません。');
     } else {
       window.location.href = 'index.html';
     }
   }
 
-  async function handleLogout() {
-    await sb.auth.signOut();
-  }
-
+  // 新規登録
   async function handleSignup(e) {
     e.preventDefault();
     clearAlert();
     setLoading('btn-signup', 'btn-signup-label', true);
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const { error } = await sb.auth.signUp({ email, password });
+    const { error } = await sb.auth.signUp({
+      email: document.getElementById('signup-email').value,
+      password: document.getElementById('signup-password').value,
+    });
     setLoading('btn-signup', 'btn-signup-label', false, 'アカウントを作成');
     if (error) {
       showAlert('error', error.message || '登録に失敗しました。');
     } else {
-      showAlert('success', '確認メールを送信しました。メールに記載のリンクをクリックしてください。');
+      showAlert('success', '確認メールを送信しました。メールのリンクをクリックして登録を完了してください。');
     }
   }
 
+  // マジックリンク
   async function handleMagicLink() {
     clearAlert();
-    const emailEl = document.getElementById('login-email');
-    const email = emailEl.value || document.getElementById('signup-email').value;
+    const email =
+      document.getElementById('login-email').value ||
+      document.getElementById('signup-email').value;
     if (!email) {
       showAlert('error', 'メールアドレスを入力してください。');
-      emailEl.focus();
+      document.getElementById('login-email').focus();
       return;
     }
     const btn = document.getElementById('btn-magic');
@@ -439,10 +505,15 @@
     btn.disabled = false;
     btn.textContent = '✉️ マジックリンクでログイン（メール送信）';
     if (error) {
-      showAlert('error', '送信に失敗しました: ' + error.message);
+      showAlert('error', '送信失敗: ' + error.message);
     } else {
-      showAlert('success', `${email} にログインリンクを送信しました。メールをご確認ください。`);
+      showAlert('success', `${email} にログインリンクを送信しました。`);
     }
+  }
+
+  // ログアウト
+  async function handleLogout() {
+    await sb.auth.signOut();
   }
 </script>
 </body>
