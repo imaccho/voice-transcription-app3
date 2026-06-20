@@ -405,23 +405,35 @@
     });
   }
 
+  // 3秒以内にセッション確認できなければフォームを強制表示（フォールバック）
+  const fallbackTimer = setTimeout(() => showState('state-form'), 3000);
+
+  function resolveState(session) {
+    clearTimeout(fallbackTimer);
+    if (session) {
+      document.getElementById('loggedin-email').textContent = session.user.email;
+      showState('state-loggedin');
+    } else {
+      showState('state-form');
+    }
+  }
+
   // ページロード時：まずスピナーを表示してからセッション確認
   showState('state-loading');
 
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session) {
-      // ログイン済み → ログイン済みUIを表示
-      document.getElementById('loggedin-email').textContent = data.session.user.email;
-      showState('state-loggedin');
-    } else {
-      // 未ログイン → フォームを表示
-      showState('state-form');
-    }
-  });
+  sb.auth.getSession()
+    .then(({ data, error }) => {
+      if (error) { console.warn('getSession error:', error); resolveState(null); return; }
+      resolveState(data.session || null);
+    })
+    .catch((err) => {
+      console.warn('getSession catch:', err);
+      resolveState(null);
+    });
 
   // ログアウト後にフォームへ切り替え
   sb.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') showState('state-form');
+    if (event === 'SIGNED_OUT') { clearTimeout(fallbackTimer); showState('state-form'); }
   });
 
   // タブ切り替え
