@@ -255,12 +255,25 @@
       <p>アカウントにログインして、すべての機能をご利用ください。</p>
     </div>
 
-    <div class="tab-wrap">
+    <div class="tab-wrap" id="tab-wrap">
       <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ログイン</button>
       <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">新規登録</button>
     </div>
 
-    <div class="login-card">
+    <!-- Already logged in state -->
+    <div id="already-logged-in" style="display:none;margin-bottom:20px;">
+      <div style="background:var(--mint-bg);border:1.5px solid var(--mint-ll);border-radius:var(--r-lg);padding:28px 24px;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:12px;">✅</div>
+        <p style="font-size:0.85rem;color:var(--mint);font-weight:700;margin-bottom:6px;">ログイン済みです</p>
+        <p id="already-email" style="font-size:0.82rem;color:var(--ink-70);margin-bottom:20px;"></p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="index.html" style="background:linear-gradient(135deg,var(--sky),#2d85b8);color:var(--white);font-size:0.82rem;font-weight:700;padding:10px 22px;border-radius:30px;text-decoration:none;box-shadow:0 4px 14px rgba(74,159,212,0.3);">🏠 トップへ戻る</a>
+          <button onclick="handleLogout()" style="background:var(--white);border:1.5px solid #FDDDD3;color:var(--peach);font-size:0.82rem;font-weight:500;padding:10px 22px;border-radius:30px;cursor:pointer;">ログアウト</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="login-forms"><div class="login-card">
       <!-- Alert -->
       <div class="alert" id="alert-box">
         <span class="alert-icon" id="alert-icon"></span>
@@ -297,12 +310,12 @@
         </button>
       </form>
 
-      <div class="divider">または</div>
+      <div id="magic-section"><div class="divider">または</div>
 
       <button class="btn-magic" id="btn-magic" onclick="handleMagicLink()">
         ✉️ マジックリンクでログイン（メール送信）
       </button>
-    </div>
+    </div></div></div>
 
     <p class="login-footer-note">
       ログインすることで、<a href="#">利用規約</a>および<a href="#">プライバシーポリシー</a>に同意したものとみなします。
@@ -323,10 +336,28 @@
   const SUPABASE_KEY = 'sb_publishable_v8WVOejfUy21WQM1kksxBQ_94lagLtS';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ログイン済みなら即リダイレクト
+  // ログイン済みチェック — 即リダイレクトせず「ログイン済み」UIを表示
   sb.auth.getSession().then(({ data }) => {
-    if (data.session) window.location.href = 'index.html';
+    if (data.session) showLoggedInState(data.session.user);
   });
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) showLoggedInState(session.user);
+    if (event === 'SIGNED_OUT') hideLoggedInState();
+  });
+
+  function showLoggedInState(user) {
+    document.getElementById('already-logged-in').style.display = 'block';
+    document.getElementById('already-email').textContent = user.email;
+    document.getElementById('tab-wrap').style.display = 'none';
+    document.getElementById('login-forms').style.display = 'none';
+    document.getElementById('magic-section').style.display = 'none';
+  }
+  function hideLoggedInState() {
+    document.getElementById('already-logged-in').style.display = 'none';
+    document.getElementById('tab-wrap').style.display = '';
+    document.getElementById('login-forms').style.display = '';
+    document.getElementById('magic-section').style.display = '';
+  }
 
   function switchTab(tab) {
     const isLogin = tab === 'login';
@@ -371,6 +402,10 @@
     } else {
       window.location.href = 'index.html';
     }
+  }
+
+  async function handleLogout() {
+    await sb.auth.signOut();
   }
 
   async function handleSignup(e) {
